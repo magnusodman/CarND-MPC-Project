@@ -122,10 +122,6 @@ int main() {
           double psi = j[1]["psi"];
           double v = j[1]["speed"];
 
-          std::cout << "x= " << px  << std::endl;
-          std::cout << "y= " << px  << std::endl;
-          std::cout << "psi= " << px  << std::endl;
-
 
           /*
           * TODO: Calculate steering angle and throttle using MPC.
@@ -133,21 +129,6 @@ int main() {
           * Both are in between [-1, 1].
           *
           */
-          Eigen::VectorXd  state(6);
-
-          /*
-          state(0) = px;
-          state(1) = py;
-          state(2) = psi;
-          state(3) = v;
-          */
-
-          state(0) = 0;
-          state(1) = 0;
-          state(2) = 0;
-          state(3) = v;
-
-          std::cout << "State: " << state << std::endl;
 
           std::tuple<Eigen::VectorXd, Eigen::VectorXd> transformedCoordinates = transformToVehicleCoordinates(ptsx, ptsy,psi, px, py);
 
@@ -161,15 +142,18 @@ int main() {
 
 
           auto coeffs = polyfit(ptsxVector, ptsyVector, 3);
-          std::cout << "Coeffs: " << coeffs << std::endl;
-
           double cte = polyeval(coeffs, 0);
+          double epsi = -atan(coeffs[1]);
 
           std::cout << "CTE: " << cte << std::endl;
+
+          Eigen::VectorXd  state(6);
+
+          state(0) = 0;
+          state(1) = 0;
+          state(2) = 0;
+          state(3) = v; //* 0,44704;
           state(4) = cte;
-          // Due to the sign starting at 0, the orientation error is -f'(x).
-          // derivative of coeffs[0] + coeffs[1] * x -> coeffs[1]
-          double epsi = -atan(coeffs[1]);
           state(5) = epsi;
 
           auto solution = mpc.Solve(state, coeffs);

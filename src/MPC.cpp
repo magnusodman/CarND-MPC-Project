@@ -6,8 +6,8 @@
 using CppAD::AD;
 
 // TODO: Set the timestep length and duration
-size_t N = 25;
-double dt = 0.05;
+size_t N = 15;
+double dt = 0.2;
 
 // This value assumes the model presented in the classroom is used.
 //
@@ -21,7 +21,7 @@ double dt = 0.05;
 // This is the length from front to CoG that has a similar radius.
 const double Lf = 2.67;
 
-double ref_v = 30;
+double ref_v = 20;
 
 size_t x_start = 0;
 size_t y_start = x_start + N;
@@ -49,21 +49,21 @@ class FG_eval {
 
       // The part of the cost based on the reference state.
       for (int t = 0; t < N; t++) {
-        fg[0] += CppAD::pow(vars[cte_start + t], 2);
-        fg[0] += CppAD::pow(vars[epsi_start + t], 2);
+        fg[0] += 1000*CppAD::pow(vars[cte_start + t], 2);
+        fg[0] += 1000*CppAD::pow(vars[epsi_start + t], 2);
         fg[0] += CppAD::pow(vars[v_start + t] - ref_v, 2);
       }
 
       // Minimize the use of actuators.
       for (int t = 0; t < N - 1; t++) {
-        fg[0] += CppAD::pow(vars[delta_start + t], 2);
-        fg[0] += CppAD::pow(vars[a_start + t], 2);
+        fg[0] += 2*CppAD::pow(vars[delta_start + t], 2);
+        fg[0] += 2*CppAD::pow(vars[a_start + t], 2);
       }
 
       // Minimize the value gap between sequential actuations.
       for (int t = 0; t < N - 2; t++) {
-        fg[0] += 500*CppAD::pow(vars[delta_start + t + 1] - vars[delta_start + t], 2);
-        fg[0] += CppAD::pow(vars[a_start + t + 1] - vars[a_start + t], 2);
+        fg[0] += 100*CppAD::pow(vars[delta_start + t + 1] - vars[delta_start + t], 2);
+        fg[0] += 10*CppAD::pow(vars[a_start + t + 1] - vars[a_start + t], 2);
       }
 
       // Initial constraints
@@ -272,7 +272,7 @@ vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
     traj_x.push_back(solution.x[index]);
   }
   for(int index =y_start; index <psi_start; index ++) {
-    traj_y.push_back(-solution.x[index]);
+    traj_y.push_back(solution.x[index]);
   }
 
 
