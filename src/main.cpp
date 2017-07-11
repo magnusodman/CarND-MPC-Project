@@ -185,15 +185,6 @@ int main() {
           //.. add (x,y) points to list here, points are in reference to the vehicle's coordinate system
           // the points in the simulator are connected by a Yellow line
 
-          /*
-          for(int index = 0; index < ptsxVector.size(); index ++) {
-            double x = ptsxVector(index);
-            if(x > 0) {
-              next_x_vals.push_back(ptsxVector(index));
-              next_y_vals.push_back(ptsyVector(index));
-            }
-          }
-           */
 
           for(int i = 1; i < 20; i++) {
             double next_y = polyeval(coeffs, 3*i);
