@@ -27,10 +27,10 @@ Update equations:
 
   1. x' = x + v * cos(psi) * dt
   2. y' = y + v * sin(psi) * dt
-  3. psi' = psi + v*delta* dt/Lf
+  3. psi' = psi + v * delta * dt/Lf
   4. v' = v + a*dt
-  5. cte' = cte + v*sin(epsi)*dt
-  6. epsi' = epsi + v*delta*dt/Lf 
+  5. cte' = cte + v * sin(epsi) * dt
+  6. epsi' = epsi + v * delta * dt / Lf 
 
 Timestep length and elapsed duration
 ------------------------------------
