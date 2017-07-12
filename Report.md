@@ -25,17 +25,17 @@ Actuators:
 
 Update equations:
 
-  x' = x + v * cos(psi) * dt
-  y' = y + v * sin(psi) * dt
-  psi' = psi + v*delta* dt/Lf
-  v' = v + a*dt
-  cte' = cte + v*sin(epsi)*dt
-  epsi' = epsi + v*delta*dt/Lf 
+  1. x' = x + v * cos(psi) * dt
+  2. y' = y + v * sin(psi) * dt
+  3. psi' = psi + v*delta* dt/Lf
+  4. v' = v + a*dt
+  5. cte' = cte + v*sin(epsi)*dt
+  6. epsi' = epsi + v*delta*dt/Lf 
 
 Timestep length and elapsed duration
 ------------------------------------
 
-In my implementation i use a 3rd order polynomial approximation derived from simulator waypoints of the road. The product of the N (number of steps) and dt(step duration) is a measure of how forward looking our system is. 
+In my implementation I use a 3rd order polynomial approximation derived from simulator waypoints of the road. The product of the N (number of steps) and dt(step duration) is a measure of how forward looking our system is. 
 
 We want the system to be forward looking enough to benefit from the information in polynomial but at the same time we don't want to have to many steps as that would be detrimental to the speed of the optimization or the prediction to crude (large dt). The is all about striking a good balance.
 
