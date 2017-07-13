@@ -7,7 +7,7 @@ Model predictive control is about turning the control problem into an optimizati
 The model
 ---------
 
-I used the state, actuators and update equations that were presented in the lesson.
+I used the state, actuators and update equations that were presented in the lesson with an exception for psi where the sign for the second component is inverted as the simulator defines as positive delta as clockwise rotation.
 
 States:
  1. x - x location in vehicle coordinates = 0 
@@ -27,7 +27,7 @@ Update equations:
 
   1. x' = x + v * cos(psi) * dt
   2. y' = y + v * sin(psi) * dt
-  3. psi' = psi + v * delta * dt/Lf
+  3. psi' = psi - v * delta * dt/Lf
   4. v' = v + a*dt
   5. cte' = cte + v * sin(epsi) * dt
   6. epsi' = epsi + v * delta * dt / Lf 
@@ -51,7 +51,12 @@ To calcuate the cte a polynomial is fitted to the waypoints from the simulator. 
 Model predictive control with latency
 -------------------------------------
 
-My solution behaved good even with the latency present. This is handled implicitly by the cost parameters. An example is that the cost punish wild steering behaviour that could result from latency in actuation. A possible improvement is to incorporate the latency in the equations (if the latency is known and consistent).
+To compensate for the latency we calculate the states at timepoint t_latency and use that as a starting point for the optimization:
 
-
+x' = 0 + v * cos(0) * t_latency = v * t_latency
+y' = 0 + v * sin(0) * t_latency = 0
+psi' = 0 + v * delta * t_latency / Lf = v * delta * t_latency / Lf
+v' = v + a * t_latency
+cte' = cte * v * sin(epsi) * t_latency
+epsi' = epsi * v * delta * t_latency / Lf
 
