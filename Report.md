@@ -7,30 +7,31 @@ Model predictive control is about turning the control problem into an optimizati
 The model
 ---------
 
-I used the state, actuators and update equations that were presented in the lesson with an exception for psi where the sign for the second component is inverted as the simulator defines as positive delta as clockwise rotation.
+I used the state, actuators and update equations that were presented in the lesson with an exception for psi and epsi where the sign for the second component is inverted as the simulator defines as positive delta as clockwise rotation.
 
 States:
- 1. x - x location in vehicle coordinates = 0 
- 2. y - y location in vehicle coordinates = 0
- 3. psi - direction in vehicle coordinate system = 0
- 4. v - speed
- 5. cte - cross track error, distance to center of road
- 6. epsi - direction error in relation to road direction at car location.
+
+    1. x - x location in vehicle coordinates = 0 
+    2. y - y location in vehicle coordinates = 0
+    3. psi - direction in vehicle coordinate system = 0
+    4. v - speed
+    5. cte - cross track error, distance to center of road
+    6. epsi - direction error in relation to road direction at car location.
 
 Actuators:
  The actuators are variables that are part of the optimization problem and part of the cost function.
 
- 1. delta - steer_value
- 2. acceleration - throttle
+    1. delta - steer_value
+    2. acceleration - throttle
 
 Update equations:
 
-  1. x' = x + v * cos(psi) * dt
-  2. y' = y + v * sin(psi) * dt
-  3. psi' = psi - v * delta * dt/Lf
-  4. v' = v + a*dt
-  5. cte' = cte + v * sin(epsi) * dt
-  6. epsi' = epsi + v * delta * dt / Lf 
+    1. x' = x + v * cos(psi) * dt
+    2. y' = y + v * sin(psi) * dt
+    3. psi' = psi - v * delta * dt/Lf
+    4. v' = v + a*dt
+    5. cte' = cte + v * sin(epsi) * dt
+    6. epsi' = epsi - v * delta * dt / Lf 
 
 Timestep length and elapsed duration
 ------------------------------------
@@ -53,10 +54,10 @@ Model predictive control with latency
 
 To compensate for the latency we calculate the states at timepoint t_latency and use that as a starting point for the optimization:
 
-x' = 0 + v * cos(0) * t_latency = v * t_latency
-y' = 0 + v * sin(0) * t_latency = 0
-psi' = 0 + v * delta * t_latency / Lf = v * delta * t_latency / Lf
-v' = v + a * t_latency
-cte' = cte * v * sin(epsi) * t_latency
-epsi' = epsi * v * delta * t_latency / Lf
+    1. x' = 0 + v * cos(0) * t_latency = v * t_latency
+    2. y' = 0 + v * sin(0) * t_latency = 0
+    3. psi' = 0 - v * delta * t_latency / Lf = - v * delta * t_latency / Lf
+    4. v' = v + a * t_latency
+    5. cte' = cte + v * sin(epsi) * t_latency
+    6. epsi' = epsi - v * delta * t_latency / Lf
 

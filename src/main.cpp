@@ -11,6 +11,8 @@
 #include "json.hpp"
 
 // for convenience
+double LATENCY = 0.1;
+double ACCELERATION_THROTTLE_RATIO = 1.0;
 using json = nlohmann::json;
 
 // For converting back and forth between radians and degrees.
@@ -120,7 +122,12 @@ int main() {
           double px = j[1]["x"];
           double py = j[1]["y"];
           double psi = j[1]["psi"];
-          double v = j[1]["speed"];
+          double mph2ms = 0.447;
+          double v = j[1]["speed"]; //* mph2ms;
+          v = v * mph2ms;
+          double delta = j[1]["steering_angle"];
+          double throttle = j[1]["throttle"];
+          double Lf = 2.67;
 
 
           /*
@@ -149,12 +156,15 @@ int main() {
 
           Eigen::VectorXd  state(6);
 
-          state(0) = 0;
+          /**
+           * To compensate for latency we calculate the state at time now + latency
+           */
+          state(0) = v * LATENCY;
           state(1) = 0;
-          state(2) = 0;
-          state(3) = v; //* 0,44704;
-          state(4) = cte;
-          state(5) = epsi;
+          state(2) = 0 - v * delta * LATENCY /  Lf;
+          state(3) = v + throttle * ACCELERATION_THROTTLE_RATIO * LATENCY; //* 0,44704;
+          state(4) = cte + v * sin(epsi) * LATENCY;
+          state(5) = epsi - v * delta * LATENCY / Lf;
 
           auto solution = mpc.Solve(state, coeffs);
           std::cout << "Solution: " << solution[0] << ", " << solution[1] << ", " << solution[2] << ", " << solution[3] << ", " << solution[4] << ", " << solution[5] << ", " << solution[6] << ", " <<solution[7] << ", " << std::endl;

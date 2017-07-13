@@ -21,7 +21,7 @@ double dt = 0.2;
 // This is the length from front to CoG that has a similar radius.
 const double Lf = 2.67;
 
-double ref_v = 30;
+double ref_v = 40 * 0.447;
 
 size_t x_start = 0;
 size_t y_start = x_start + N;
@@ -90,15 +90,14 @@ public:
         // derrivative
         AD<double> psides0 = CppAD::atan(coeffs[1]+coeffs[2]*2*x0+coeffs[3]*3*x0*x0);
 
-        // set the vehicle kinematc model
+        // set the vehicle kinematic model
         fg[2 + x_start + i] = x1 - (x0 + v0 * CppAD::cos(psi0) * dt);
         fg[2 + y_start + i] = y1 - (y0 + v0 * CppAD::sin(psi0) * dt);
         fg[2 + psi_start + i] = psi1 - (psi0 - v0 * delta0 / Lf * dt);
         fg[2 + v_start + i] = v1 - (v0 + a0 * dt);
         fg[2 + cte_start + i] =
           cte1 - ((f0 - y0) + (v0 * CppAD::sin(epsi0) * dt));
-        fg[2 + epsi_start + i] =
-          epsi1 - ((psi0 - psides0) + v0 * delta0 / Lf * dt);
+        fg[2 + epsi_start + i] = epsi1 - ((psi0 - psides0) - v0 * delta0 / Lf * dt);
 
       }
     }
@@ -112,7 +111,6 @@ MPC::~MPC() {}
 
 vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
   bool ok = true;
-  size_t i;
   typedef CPPAD_TESTVECTOR(double) Dvector;
 
   double x = state(0);
